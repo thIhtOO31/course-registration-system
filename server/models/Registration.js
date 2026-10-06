@@ -5,23 +5,26 @@ const registrationSchema = new mongoose.Schema(
         studentId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            required: true,
+            required: [true, "Student reference is required"],
         },
         offeringId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Offering",
-            required: true,
+            required: [true, "Offering reference is required"],
         },
         term: {
             type: String,
-            required: true,
+            required: [true, "Term is required"],
             trim: true,
         },
         status: {
             type: String,
-            enum: ["registered", "pending", "dropped", "approved"],
+            enum: {
+                values: ["registered", "dropped"],
+                message: "{VALUE} is not a valid registration status",
+            },
             default: "registered",
-            required: true,
+            required: [true, "Registration status is required"],
         },
         createdAt: {
             type: Date,
@@ -33,7 +36,7 @@ const registrationSchema = new mongoose.Schema(
     }
 );
 
-// Prevent duplicate active registration for the same student and offering
+// Prevent duplicate registration for the same student and offering
 registrationSchema.index({ studentId: 1, offeringId: 1 }, { unique: true });
 
-module.exports = mongoose.model("Registration", registrationSchema);
+module.exports = mongoose.model("Registration", registrationSchema);
