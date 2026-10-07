@@ -107,6 +107,61 @@ F9 must set addDropOpen to true and a future addDropClosesAt date on any section
 
 ---
 
+## D6 - Fictional Student Histories and Current Registrations
+
+**Commit:** feat: prepare fictional student histories and registration cases
+**Files changed:** `server/scripts/seed.js`, `docs/checks/database.md`
+
+### Demo Accounts
+
+- Student main login: `student01@example.com`
+- Advisor main login: `advisor1@example.com`
+- Admin main login: `admin@example.com`
+- Test-only password: `DemoPass123!`
+
+The password is intentionally plaintext in D6 definitions only. D7 must hash it before storing it as `passwordHash`; no production credential or real staff identity is used.
+
+### D6 Data Shape
+
+- `STUDENT_DEFS`: exactly 25 fictional students, numbered `DEMO001` through `DEMO025`.
+- `ADVISOR_DEFS`: exactly two fictional advisors; every student has an assigned `advisorKey`.
+- `ADMIN_DEFS`: one fictional admin.
+- `RECORD_DEFS`: 75 deterministic earlier-term records, three per student in `2025-2` and `2025-3`, using the allowed grade scale.
+- `CURRENT_REGISTRATION_DEFS`: data-only registrations for D7; no database writes occur here.
+
+### Required Grade Cases
+
+| Student | History condition | Expected result |
+|---------|-------------------|-----------------|
+| DEMO001 | `CSC110 F` in 2025-2 and a different passed course | unresolved F plus a passed course |
+| DEMO002 | `W` records with no pass | no passed course |
+| DEMO003 | `CSC210 F` in 2025-2 followed by `A` in 2025-3 | earlier F followed by later pass |
+| DEMO004 | `CSC220 F` in 2025-2 followed by `W` in 2025-3 | F then W |
+| DEMO005 | current `CLASH_A` registration | known clash with DEMO006's `CLASH_B` registration |
+
+### Current Registration Case Map
+
+| Fictional student | Course / section | Expected result |
+|-------------------|------------------|-----------------|
+| DEMO005 | CSC220 S1 (`CLASH_A`) | Known overlapping schedule with DEMO007's CSC110 S1 (`CLASH_B`) |
+| DEMO007 | CSC110 S1 (`CLASH_B`) | Known overlapping schedule with DEMO005's CSC220 S1 (`CLASH_A`) |
+| DEMO001, DEMO004, DEMO007 | CSC210 S1 (`FULL_DEMO`) | 3 registrations fill the cap; a fourth registration is rejected |
+| DEMO001-Demo024 | CSC200 S1 (`ONE_LEFT`) | 24 registrations leave exactly one seat; no prior CSC200 pass is included |
+
+The registrations do not target a course that has already been passed by the same student, and no student is registered in two overlapping current sections. `FULL_DEMO` and `ONE_LEFT` are intentionally distinct sections, so the case definitions remain valid in the same seed.
+
+### D6 Pre-commit Check
+
+- Exactly 25 students with unique invented names, IDs, emails and advisor assignments
+- Advertised demo logins use only the documented fictional accounts and test password
+- Every student has three earlier-term records; DEMO001-Demo004 contain the required grade sequences
+- All course keys match the D5 catalogue/offerings
+- Current registrations are data-only and do not write to MongoDB
+- `FULL_DEMO` has 3 registrations and `ONE_LEFT` has 24 registrations
+- No real staff credentials, classmates, transcripts, phone numbers, birth dates, photos or addresses are included
+
+---
+
 ### D5 Pre-commit Check
 
 - All course names/codes have a documented source (CSC220 confirmed; others noted as demo codes)
