@@ -1,16 +1,17 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
-import { GraduationCap, Briefcase, Shield, LogIn, LogOut } from "lucide-react";
+import { GraduationCap, LogIn, LogOut } from "lucide-react";
 
+/**
+ * Top navigation banner shown on every page.
+ * When the user is logged in it shows their name, role badge, and a logout button.
+ * The portal links (Student / Advisor / Admin) are hidden when logged out, and are
+ * no longer usable as a role-switcher — navigation is controlled by login.
+ */
 export default function SharedNavBanner() {
-  const { currentUser, role, loginWithRole, logout } = useAuth();
+  const { currentUser, role, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
-
-  const handleRoleSwitch = (newRole) => {
-    loginWithRole(newRole);
-    navigate(`/${newRole}`);
-  };
 
   const handleLogout = () => {
     logout();
@@ -23,87 +24,20 @@ export default function SharedNavBanner() {
         {/* Portal Title */}
         <div className="shared-nav-brand">
           <GraduationCap size={20} />
-          <span>AU Course Registration System</span>
+          <span>Course Registration System</span>
         </div>
 
-        {/* Readable Navigation Links */}
-        <nav className="shared-nav-links" aria-label="Portal Navigation">
-          <NavLink
-            to="/login"
-            className={({ isActive }) => `shared-nav-link ${isActive ? "active" : ""}`}
-            id="nav-link-login"
-          >
-            <LogIn size={14} />
-            <span>Login</span>
-          </NavLink>
-
-          <NavLink
-            to="/student"
-            className={({ isActive }) => `shared-nav-link ${isActive ? "active" : ""}`}
-            id="nav-link-student"
-          >
-            <GraduationCap size={14} />
-            <span>Student Portal</span>
-          </NavLink>
-
-          <NavLink
-            to="/advisor"
-            className={({ isActive }) => `shared-nav-link ${isActive ? "active" : ""}`}
-            id="nav-link-advisor"
-          >
-            <Briefcase size={14} />
-            <span>Advisor Portal</span>
-          </NavLink>
-
-          <NavLink
-            to="/admin"
-            className={({ isActive }) => `shared-nav-link ${isActive ? "active" : ""}`}
-            id="nav-link-admin"
-          >
-            <Shield size={14} />
-            <span>Admin Console</span>
-          </NavLink>
-        </nav>
-
-        {/* Current User & Role Switcher */}
-        <div className="shared-nav-user">
-          {currentUser ? (
+        {/* Right side: user info OR login link */}
+        <div className="shared-nav-user">s
+          {isAuthenticated && currentUser ? (
             <>
-              <div style={{ display: "flex", gap: "4px" }}>
-                <button
-                  type="button"
-                  onClick={() => handleRoleSwitch("student")}
-                  className={`shared-nav-link ${role === "student" ? "active" : ""}`}
-                  style={{ fontSize: "0.75rem", padding: "0.2rem 0.5rem" }}
-                  title="Switch to Student View"
-                >
-                  Student
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleRoleSwitch("advisor")}
-                  className={`shared-nav-link ${role === "advisor" ? "active" : ""}`}
-                  style={{ fontSize: "0.75rem", padding: "0.2rem 0.5rem" }}
-                  title="Switch to Advisor View"
-                >
-                  Advisor
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleRoleSwitch("admin")}
-                  className={`shared-nav-link ${role === "admin" ? "active" : ""}`}
-                  style={{ fontSize: "0.75rem", padding: "0.2rem 0.5rem" }}
-                  title="Switch to Admin View"
-                >
-                  Admin
-                </button>
-              </div>
-
+              {/* User badge showing name + role */}
               <div className="user-badge">
                 <span>{currentUser.name}</span>
                 <span className={`user-badge-role ${role}`}>{role}</span>
               </div>
 
+              {/* Sign out */}
               <button
                 type="button"
                 onClick={handleLogout}
@@ -116,7 +50,16 @@ export default function SharedNavBanner() {
               </button>
             </>
           ) : (
-            <span className="user-badge">Guest Session</span>
+            <NavLink
+              to="/login"
+              className={({ isActive }) =>
+                `shared-nav-link ${isActive ? "active" : ""}`
+              }
+              id="nav-link-login"
+            >
+              <LogIn size={14} />
+              <span>Login</span>
+            </NavLink>
           )}
         </div>
       </div>
