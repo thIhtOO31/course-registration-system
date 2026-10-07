@@ -325,10 +325,344 @@ const OFFERING_KEYS = {
 };
 
 // ---------------------------------------------------------------------------
+// D6 — FICTIONAL DEMO ACCOUNTS, HISTORIES AND CURRENT REGISTRATIONS
+//
+// This password is intentionally a test-only value. D7 must hash it before
+// storing it as passwordHash; it is not a production credential.
+// ---------------------------------------------------------------------------
+const DEMO_TEST_PASSWORD = "DemoPass123!";
+
+const ADVISOR_DEFS = [
+    {
+        _key: "ADVISOR1",
+        name: "Dr. Linette Vale",
+        email: "advisor1@example.com",
+        role: "advisor",
+        password: DEMO_TEST_PASSWORD,
+        _note: "Fictional advisor used for demo account and student assignment.",
+    },
+    {
+        _key: "ADVISOR2",
+        name: "Dr. Arjun Suri",
+        email: "advisor2@example.com",
+        role: "advisor",
+        password: DEMO_TEST_PASSWORD,
+        _note: "Second fictional advisor; no real staff identity is used.",
+    },
+];
+
+const ADMIN_DEFS = [
+    {
+        _key: "ADMIN1",
+        name: "Admin Rowan Moss",
+        email: "admin@example.com",
+        role: "admin",
+        password: DEMO_TEST_PASSWORD,
+        _note: "Fictional admin used only for the demo login.",
+    },
+];
+
+// Student IDs and emails are deliberately fabricated. Each student receives
+// a deterministic three-course history from 2025-2 and 2025-3, using only the
+// grades accepted by Record's schema.
+const STUDENT_DEFS = [
+    {
+        _key: "DEMO001", studentId: "DEMO001", name: "Alicia Morrow",
+        email: "student01@example.com", advisorKey: "ADVISOR1",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC110", grade: "F" },
+            { term: "2025-2", courseKey: "CSC120", grade: "B" },
+            { term: "2025-3", courseKey: "CSC220", grade: "A" },
+        ],
+    },
+    {
+        _key: "DEMO002", studentId: "DEMO002", name: "Brin Kestrel",
+        email: "student02@example.com", advisorKey: "ADVISOR1",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC150", grade: "W" },
+            { term: "2025-3", courseKey: "CSC230", grade: "W" },
+            { term: "2025-3", courseKey: "CSC240", grade: "W" },
+        ],
+    },
+    {
+        _key: "DEMO003", studentId: "DEMO003", name: "Cora Nivens",
+        email: "student03@example.com", advisorKey: "ADVISOR1",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC210", grade: "F" },
+            { term: "2025-3", courseKey: "CSC210", grade: "A" },
+            { term: "2025-3", courseKey: "MTH101", grade: "B+" },
+        ],
+    },
+    {
+        _key: "DEMO004", studentId: "DEMO004", name: "Dorian Vale",
+        email: "student04@example.com", advisorKey: "ADVISOR2",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC220", grade: "F" },
+            { term: "2025-3", courseKey: "CSC220", grade: "W" },
+            { term: "2025-3", courseKey: "CSC110", grade: "C+" },
+        ],
+    },
+    {
+        _key: "DEMO005", studentId: "DEMO005", name: "Elara Finch",
+        email: "student05@example.com", advisorKey: "ADVISOR2",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC120", grade: "B+" },
+            { term: "2025-2", courseKey: "CSC150", grade: "C" },
+            { term: "2025-3", courseKey: "MTH101", grade: "A" },
+        ],
+    },
+    {
+        _key: "DEMO006", studentId: "DEMO006", name: "Farid Sol",
+        email: "student06@example.com", advisorKey: "ADVISOR2",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC110", grade: "C+" },
+            { term: "2025-2", courseKey: "CSC210", grade: "B" },
+            { term: "2025-3", courseKey: "CSC230", grade: "A" },
+        ],
+    },
+    {
+        _key: "DEMO007", studentId: "DEMO007", name: "Gwendolyn Pike",
+        email: "student07@example.com", advisorKey: "ADVISOR1",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC240", grade: "B" },
+            { term: "2025-2", courseKey: "MTH101", grade: "C+" },
+            { term: "2025-3", courseKey: "CSC150", grade: "A" },
+        ],
+    },
+    {
+        _key: "DEMO008", studentId: "DEMO008", name: "Haru Tamsin",
+        email: "student08@example.com", advisorKey: "ADVISOR1",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC120", grade: "C" },
+            { term: "2025-2", courseKey: "CSC200", grade: "W" },
+            { term: "2025-3", courseKey: "CSC220", grade: "B+" },
+        ],
+    },
+    {
+        _key: "DEMO009", studentId: "DEMO009", name: "Imani Belen",
+        email: "student09@example.com", advisorKey: "ADVISOR2",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC110", grade: "A" },
+            { term: "2025-2", courseKey: "CSC230", grade: "B+" },
+            { term: "2025-3", courseKey: "CSC240", grade: "C+" },
+        ],
+    },
+    {
+        _key: "DEMO010", studentId: "DEMO010", name: "Jae Thorne",
+        email: "student10@example.com", advisorKey: "ADVISOR2",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC150", grade: "B" },
+            { term: "2025-2", courseKey: "MTH101", grade: "C" },
+            { term: "2025-3", courseKey: "CSC200", grade: "W" },
+        ],
+    },
+    {
+        _key: "DEMO011", studentId: "DEMO011", name: "Kofi Adebayo",
+        email: "student11@example.com", advisorKey: "ADVISOR1",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC210", grade: "C+" },
+            { term: "2025-2", courseKey: "CSC220", grade: "B" },
+            { term: "2025-3", courseKey: "CSC110", grade: "A" },
+        ],
+    },
+    {
+        _key: "DEMO012", studentId: "DEMO012", name: "Liora Senn",
+        email: "student12@example.com", advisorKey: "ADVISOR1",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC120", grade: "A" },
+            { term: "2025-2", courseKey: "CSC240", grade: "D" },
+            { term: "2025-3", courseKey: "CSC150", grade: "B+" },
+        ],
+    },
+    {
+        _key: "DEMO013", studentId: "DEMO013", name: "Mira Quill",
+        email: "student13@example.com", advisorKey: "ADVISOR2",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC110", grade: "B+" },
+            { term: "2025-2", courseKey: "CSC200", grade: "W" },
+            { term: "2025-3", courseKey: "MTH101", grade: "A" },
+        ],
+    },
+    {
+        _key: "DEMO014", studentId: "DEMO014", name: "Niko Vares",
+        email: "student14@example.com", advisorKey: "ADVISOR2",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC230", grade: "C+" },
+            { term: "2025-2", courseKey: "CSC240", grade: "B" },
+            { term: "2025-3", courseKey: "CSC210", grade: "B+" },
+        ],
+    },
+    {
+        _key: "DEMO015", studentId: "DEMO015", name: "Oren Lark",
+        email: "student15@example.com", advisorKey: "ADVISOR1",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC120", grade: "B+" },
+            { term: "2025-2", courseKey: "CSC220", grade: "C" },
+            { term: "2025-3", courseKey: "CSC200", grade: "W" },
+        ],
+    },
+    {
+        _key: "DEMO016", studentId: "DEMO016", name: "Panya Shor",
+        email: "student16@example.com", advisorKey: "ADVISOR1",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC110", grade: "C" },
+            { term: "2025-2", courseKey: "CSC150", grade: "B" },
+            { term: "2025-3", courseKey: "CSC230", grade: "B+" },
+        ],
+    },
+    {
+        _key: "DEMO017", studentId: "DEMO017", name: "Rowan Cale",
+        email: "student17@example.com", advisorKey: "ADVISOR2",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC120", grade: "D+" },
+            { term: "2025-2", courseKey: "CSC210", grade: "C+" },
+            { term: "2025-3", courseKey: "CSC240", grade: "B" },
+        ],
+    },
+    {
+        _key: "DEMO018", studentId: "DEMO018", name: "Sora Mendez",
+        email: "student18@example.com", advisorKey: "ADVISOR2",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC110", grade: "B" },
+            { term: "2025-2", courseKey: "CSC200", grade: "C+" },
+            { term: "2025-3", courseKey: "MTH101", grade: "B+" },
+        ],
+    },
+    {
+        _key: "DEMO019", studentId: "DEMO019", name: "Talia Rook",
+        email: "student19@example.com", advisorKey: "ADVISOR1",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC150", grade: "A" },
+            { term: "2025-2", courseKey: "CSC230", grade: "C" },
+            { term: "2025-3", courseKey: "CSC220", grade: "B" },
+        ],
+    },
+    {
+        _key: "DEMO020", studentId: "DEMO020", name: "Umesh Nair",
+        email: "student20@example.com", advisorKey: "ADVISOR1",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC120", grade: "B" },
+            { term: "2025-2", courseKey: "CSC240", grade: "B+" },
+            { term: "2025-3", courseKey: "CSC210", grade: "A" },
+        ],
+    },
+    {
+        _key: "DEMO021", studentId: "DEMO021", name: "Veda Opal",
+        email: "student21@example.com", advisorKey: "ADVISOR2",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC110", grade: "C+" },
+            { term: "2025-2", courseKey: "CSC150", grade: "D" },
+            { term: "2025-3", courseKey: "CSC200", grade: "W" },
+        ],
+    },
+    {
+        _key: "DEMO022", studentId: "DEMO022", name: "Wren Hart",
+        email: "student22@example.com", advisorKey: "ADVISOR2",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC120", grade: "C+" },
+            { term: "2025-2", courseKey: "CSC230", grade: "B" },
+            { term: "2025-3", courseKey: "MTH101", grade: "B+" },
+        ],
+    },
+    {
+        _key: "DEMO023", studentId: "DEMO023", name: "Ximena Solis",
+        email: "student23@example.com", advisorKey: "ADVISOR1",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC210", grade: "B+" },
+            { term: "2025-2", courseKey: "CSC240", grade: "C" },
+            { term: "2025-3", courseKey: "CSC110", grade: "A" },
+        ],
+    },
+    {
+        _key: "DEMO024", studentId: "DEMO024", name: "Yuki Kato",
+        email: "student24@example.com", advisorKey: "ADVISOR1",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC120", grade: "A" },
+            { term: "2025-2", courseKey: "CSC220", grade: "B" },
+            { term: "2025-3", courseKey: "CSC200", grade: "W" },
+        ],
+    },
+    {
+        _key: "DEMO025", studentId: "DEMO025", name: "Zaria Moon",
+        email: "student25@example.com", advisorKey: "ADVISOR2",
+        password: DEMO_TEST_PASSWORD,
+        history: [
+            { term: "2025-2", courseKey: "CSC150", grade: "B+" },
+            { term: "2025-2", courseKey: "CSC230", grade: "C+" },
+            { term: "2025-3", courseKey: "CSC240", grade: "A" },
+        ],
+    },
+];
+
+// Flatten student histories into records for D7's create path. Keeping these
+// definitions separate makes course references and grades easy to validate.
+const RECORD_DEFS = STUDENT_DEFS.flatMap((student) =>
+    student.history.map((record) => ({
+        studentKey: student._key,
+        studentId: student.studentId,
+        courseKey: record.courseKey,
+        term: record.term,
+        grade: record.grade,
+    }))
+);
+
+// Current registrations are deliberately data-only. D7 should create them only
+// after inserting the users, courses and offerings. The three FULL_DEMO rows
+// fill the cap, while DEMO001-Demo024 fill ONE_LEFT to the boundary. DEMO005
+// and DEMO007 additionally exercise the two overlapping schedule sections.
+const CURRENT_REGISTRATION_DEFS = [
+    { studentKey: "DEMO005", studentId: "DEMO005", offeringKey: "CLASH_A", term: CURRENT_TERM, expectedResult: "known clash with DEMO007 on CLASH_B" },
+    { studentKey: "DEMO007", studentId: "DEMO007", offeringKey: "CLASH_B", term: CURRENT_TERM, expectedResult: "known clash with DEMO005 on CLASH_A" },
+    ...["DEMO001", "DEMO004", "DEMO007"].map((studentKey) => ({
+        studentKey, studentId: studentKey, offeringKey: "FULL_DEMO", term: CURRENT_TERM,
+        expectedResult: "FULL_DEMO is full after 3 registrations",
+    })),
+    ...["DEMO001", "DEMO002", "DEMO003", "DEMO004", "DEMO005", "DEMO006", "DEMO007", "DEMO008", "DEMO009", "DEMO010", "DEMO011", "DEMO012", "DEMO013", "DEMO014", "DEMO015", "DEMO016", "DEMO017", "DEMO018", "DEMO019", "DEMO020", "DEMO021", "DEMO022", "DEMO023", "DEMO024"].map((studentKey) => ({
+        studentKey, studentId: studentKey, offeringKey: "ONE_LEFT", term: CURRENT_TERM,
+        expectedResult: "ONE_LEFT has one seat left after 24 registrations",
+    })),
+];
+
+// ---------------------------------------------------------------------------
 // Export definitions so D6 (student defs) and D7 (insert + register) can
 // require() this file without re-running seedDatabase().
 // ---------------------------------------------------------------------------
-module.exports = { CURRENT_TERM, COURSE_DEFS, OFFERING_DEFS, OFFERING_KEYS };
+module.exports = {
+    CURRENT_TERM,
+    COURSE_DEFS,
+    OFFERING_DEFS,
+    OFFERING_KEYS,
+    DEMO_TEST_PASSWORD,
+    ADVISOR_DEFS,
+    ADMIN_DEFS,
+    STUDENT_DEFS,
+    RECORD_DEFS,
+    CURRENT_REGISTRATION_DEFS,
+};
 
 // ---------------------------------------------------------------------------
 // seedDatabase() — scaffold only for D5.
